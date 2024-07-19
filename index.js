@@ -14,3 +14,9 @@ app.listen(PORT,"0.0.0.0",function(){
     //print the server log number
     console.log(`server is running on ${PORT}`);
 })
+
+app.get("/hello",(req,res)=>{
+res.send({"name":"hunais","Designation":"Flutter Developer"});
+}
+    
+);
