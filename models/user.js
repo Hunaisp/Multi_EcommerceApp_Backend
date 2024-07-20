@@ -4,12 +4,20 @@ const userSchema= mongoose.Schema({
     fullName:{
         type: String,
         required: true,
-        trim:true
+        trim:true,
+    
     },
    email:{
       type:String,
       required:true,
-      trim:true
+      trim:true,    
+      validate:{
+        validator:(value)=>{
+            const result= /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+              return result.test(value);
+        },
+        message:"Please enter a valid email address",
+    }
    },
    state:{
     type:String,
@@ -29,6 +37,13 @@ const userSchema= mongoose.Schema({
    password:{
     type:String,
     required:true,
+    validate:{
+        validator:(value)=>{
+            //check if the password is atleast 8 characters
+            return value.length>=8;
+        },
+        message:"password must be atleast 8 charcters"
+    }
 
    }
 });
