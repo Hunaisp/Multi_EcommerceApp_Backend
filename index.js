@@ -20,6 +20,7 @@ app.use("/", helloRoute)
 //connect mongodb :-
 mongoose.connect(DB).then(()=>{
     console.log("mongo db connected");
+    
 });
 // 3- start the server and listen the specified port :-
 app.listen(PORT,"0.0.0.0",function(){
