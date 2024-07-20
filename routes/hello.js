@@ -5,8 +5,4 @@ const helloRoute= express.Router();
 helloRoute.get('/hello',(req,res)=>{
    res.send({"name":"hunais"});
 });
-//second api
-helloRoute.get('/hi',(req,res)=>{
-    res.send({"name":"ali"});
-});
 module.exports = helloRoute
