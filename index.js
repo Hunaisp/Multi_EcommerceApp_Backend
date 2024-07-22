@@ -4,6 +4,14 @@
 const express = require('express');
 //import mongo db:-
 const mongoose=require("mongoose");
+//import signup api
+const authRouter=require("./routes/auth");
+// 2- create an instance for express server :-
+const app=express();
+// register the authRoute
+
+app.use(express.json());
+app.use(authRouter);
 
 // now going to create a express server
 //Steps
@@ -12,8 +20,7 @@ const mongoose=require("mongoose");
 const PORT=3000;
 //mongo db url :-
 const DB="mongodb+srv://hunaispc8468:H7UpR7LIcBaHCTDO@cluster0.tanb4jl.mongodb.net/";
-// 2- create an instance for express server :-
-const app=express();
+
 
 //connect mongodb :-
 mongoose.connect(DB).then(()=>{

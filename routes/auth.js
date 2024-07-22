@@ -1,5 +1,4 @@
 const express = require('express');
-const user=require('../models/user');
 const User = require('../models/user');
 const authRouter=express.Router();
 //creating signup api :-
@@ -10,7 +9,7 @@ try {
   const {fullName,email,password} = req.body;
   const existingEmail = await User.findOne({email});
   if(existingEmail){
-    //if user enterd email is already exist return statusCode 400 and send the error message
+    //if user enterd email is already exist in the database return statusCode 400 and send the error message
     return res.status(400).json({msg:"Enterd email address is already exist"});
   }
   else{
@@ -27,7 +26,11 @@ try {
 
 
     
-} catch (error) {
-    
+} catch (e) {
+  console.log({e});
+  res.status(500).json({error:e.message})  ;
 }
 });
+
+// export the signup api:-
+module.exports= authRouter;
