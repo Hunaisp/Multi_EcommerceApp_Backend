@@ -39,7 +39,6 @@ const userSchema= mongoose.Schema({
     required:true,
     validate:{
         validator:(value)=>{
-            console.log("from validator : ",{value}, value.length >= 8);
             //check if the password is atleast 8 characters
             return value.length >= 8;
         },
