@@ -3,6 +3,8 @@ const User = require('../models/user');
 //import password hash package :-
 const bcrypt=require("bcryptjs");
 const authRouter=express.Router();
+//import jsonwebtoken package:
+const jwt=require("jsonwebtoken");
 //creating signup api :-
 
 authRouter.post('/api/signup',async(req,res)=>{
@@ -20,7 +22,9 @@ try {
 const salt= await bcrypt.genSalt(10);
 //hash(protect) the password using the generated salt
 const hashedPassword= await bcrypt.hash(password,salt);
-   var user= new User({fullName,email,password:hashedPassword});
+   var user= new User({fullName,email,password:hashedPassword
+    
+   });
    //save the user:-
   user= await user.save();
   //send a response to user after the signup api is success:-
@@ -36,5 +40,40 @@ const hashedPassword= await bcrypt.hash(password,salt);
 }
 });
 
-// export the signup api:-
+//creating login api
+
+authRouter.post('/api/signin',async(req,res)=>{
+try {
+//extract username ,email and password from the request :-
+const {email,password} = req.body;
+//store all the values from the collection in findUser variable:- 
+const findUser=await User.findOne({email});
+if(!findUser){
+  res.statusCode(400).json({message:"User not found with this email"});
+}else{
+  // checking the user enterd password is available in the database:-
+ const isMatched= await bcrypt.compare(password,findUser.password);
+ if(!isMatched){
+  res.statusCode(400).json({message:"Incorrect Password"});
+ }else{
+//if password is matched then go to signin
+// create a accesstoken after signin we use a package named-jsonwebtoken
+const token= jwt.sign({id:findUser._id},"passwordKey");
+//send the response after the successfull signin,but dont send the password 
+//remove the password from the response:
+const {password, ...userWithoutPassword}=findUser._doc;
+//send the response
+res.json({token,...userWithoutPassword});
+
+ }
+}
+  
+} catch (e) {
+  res.status(500).json({error:e.message})  ;
+}
+
+});
+
+
+// export the auth Router:-
 module.exports= authRouter;
