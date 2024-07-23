@@ -14,7 +14,7 @@ try {
   const existingEmail = await User.findOne({email});
   if(existingEmail){
     //if user enterd email is already exist in the database return statusCode 400 and send the error message
-    return res.status(400).json({msg:"Enterd email address is already exist"});
+    return res.status(400).json({message:"Enterd email address is already exist"});
   }
   else{
     //if the enterd email address is not existing in the database , it will create a new one with the enterd one and store the created user in a variable:-
@@ -42,37 +42,37 @@ const hashedPassword= await bcrypt.hash(password,salt);
 
 //creating login api
 
-authRouter.post('/api/signin',async(req,res)=>{
-try {
-//extract username ,email and password from the request :-
-const {email,password} = req.body;
-//store all the values from the collection in findUser variable:- 
-const findUser=await User.findOne({email});
-if(!findUser){
-  res.statusCode(400).json({message:"User not found with this email"});
-}else{
-  // checking the user enterd password is available in the database:-
- const isMatched= await bcrypt.compare(password,findUser.password);
- if(!isMatched){
-  res.statusCode(400).json({message:"Incorrect Password"});
- }else{
-//if password is matched then go to signin
-// create a accesstoken after signin we use a package named-jsonwebtoken
-const token= jwt.sign({id:findUser._id},"passwordKey");
-//send the response after the successfull signin,but dont send the password 
-//remove the password from the response:
-const {password, ...userWithoutPassword}=findUser._doc;
-//send the response
-res.json({token,...userWithoutPassword});
+authRouter.post('/api/signin', async (req, res) => {
+  try {
+    // Extract email and password from the request
+    const { email, password } = req.body;
 
- }
-}
-  
-} catch (e) {
-  res.status(500).json({error:e.message})  ;
-}
+    // Find user by email
+    const findUser = await User.findOne({ email });
+    if (!findUser) {
+      return res.status(400).json({ message: "User not found with this email" });
+    }
 
+    // Check if the entered password matches the stored password
+    const isMatched = await bcrypt.compare(password, findUser.password);
+    if (!isMatched) {
+      return res.status(400).json({ message: "Incorrect Password" });
+    }
+
+    // Create an access token using jsonwebtoken
+    const token = jwt.sign({ id: findUser._id }, "passwordKey");
+
+    // Remove the password from the response
+    const { password: userPassword, ...userWithoutPassword } = findUser._doc;
+
+    // Send the response
+    res.json({ token, ...userWithoutPassword });
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
+
 
 
 // export the auth Router:-
